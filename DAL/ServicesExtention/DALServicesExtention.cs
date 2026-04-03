@@ -14,9 +14,8 @@ namespace CompanySystem.DAL
             {
                 options.UseSqlServer(connectionString);
                 options.ConfigureWarnings(w =>
-       w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
-           
-        });
+                    w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+            });
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
@@ -30,12 +29,15 @@ namespace CompanySystem.DAL
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 
                 options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedEmail = false; 
+                options.SignIn.RequireConfirmedEmail = false;
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
+
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICartRepository, CartRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }

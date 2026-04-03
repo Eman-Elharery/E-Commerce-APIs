@@ -10,13 +10,16 @@ namespace CompanySystem.BLL
             services.AddScoped<ICategoryManager, CategoryManager>();
             services.AddScoped<IProductManager, ProductManager>();
             services.AddScoped<IImageManager, ImageManager>();
+            services.AddScoped<ICartManager, CartManager>();
+            services.AddScoped<IOrderManager, OrderManager>();
+
             services.AddScoped<IValidator<ProductCreateDTO>, ProductCreateDtoValidator>();
             services.AddScoped<IValidator<CategoryCreateDTO>, CategoryCreateDtoValidator>();
             services.AddScoped<IValidator<ProductEditDTO>, ProductEditDtoValidator>();
             services.AddScoped<IValidator<CategoryEditDTO>, CategoryEditDtoValidator>();
             services.AddScoped<IValidator<ImageUploadDto>, ImageUploadDtoValidator>();
-            services.AddScoped<IErrorMapper, ErrorMapper>();
 
+            services.AddScoped<IErrorMapper, ErrorMapper>();
         }
     }
 }

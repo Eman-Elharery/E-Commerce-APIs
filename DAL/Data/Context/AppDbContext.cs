@@ -67,7 +67,7 @@ namespace CompanySystem.DAL
                 EmailConfirmed = true,
                 SecurityStamp = "admin-security-stamp-fixed",
                 ConcurrencyStamp = "admin-concurrency-stamp-fixed",
-                CreatedAt = _seedDate  
+                CreatedAt = _seedDate
             };
             adminUser.PasswordHash = hasher.HashPassword(adminUser, "Admin@123");
 
@@ -107,10 +107,70 @@ namespace CompanySystem.DAL
                 new Product { Id = 14, Title = "Backpack", Description = "Laptop Backpack", Price = 700, Count = 16, CategoryId = 6, CreatedAt = _seedDate }
             );
 
+            // Cart: one cart per user
+            modelBuilder.Entity<Cart>()
+                .HasIndex(c => c.UserId)
+                .IsUnique();
+
+            modelBuilder.Entity<Cart>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // CartItem: unique product per cart
+            modelBuilder.Entity<CartItem>()
+                .HasIndex(ci => new { ci.CartId, ci.ProductId })
+                .IsUnique();
+
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Cart)
+                .WithMany(c => c.Items)
+                .HasForeignKey(ci => ci.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Product)
+                .WithMany()
+                .HasForeignKey(ci => ci.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Order
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.TotalPrice)
+                .HasColumnType("decimal(18,2)");
+
+            // OrderItem
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.Items)
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(oi => oi.UnitPrice)
+                .HasColumnType("decimal(18,2)");
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
 
         public virtual DbSet<Product> Products => Set<Product>();
         public virtual DbSet<Category> Categories => Set<Category>();
+        public virtual DbSet<Cart> Carts => Set<Cart>();
+        public virtual DbSet<CartItem> CartItems => Set<CartItem>();
+        public virtual DbSet<Order> Orders => Set<Order>();
+        public virtual DbSet<OrderItem> OrderItems => Set<OrderItem>();
     }
 }
