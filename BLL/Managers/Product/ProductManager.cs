@@ -1,10 +1,9 @@
 ﻿using CompanySystem.Common;
 using CompanySystem.DAL;
 using FluentValidation;
+
 namespace CompanySystem.BLL
 {
-   
-
     public class ProductManager : IProductManager
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -24,6 +23,8 @@ namespace CompanySystem.BLL
             _errorMapper = errorMapper;
         }
 
+        /*------------------------------------------------*/
+
         public async Task<GeneralResult<PagedResult<ProductReadDTO>>> GetProductsAsync(
             ProductFilterParameters filter,
             PaginationParameters pagination)
@@ -31,36 +32,38 @@ namespace CompanySystem.BLL
             var query = (await _unitOfWork.ProductRepository.GetAllWithCategoryAsync()).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filter.Search))
-            {
                 query = query.Where(p => p.Title.Contains(filter.Search));
-            }
 
             if (filter.MinPrice > 0)
-            {
                 query = query.Where(p => p.Price >= filter.MinPrice);
-            }
 
             if (filter.MaxPrice > 0)
-            {
                 query = query.Where(p => p.Price <= filter.MaxPrice);
-            }
+
+            if (filter.IsOrganic.HasValue)
+                query = query.Where(p => p.IsOrganic == filter.IsOrganic.Value);
+
+            if (filter.IsFeatured.HasValue)
+                query = query.Where(p => p.IsFeatured == filter.IsFeatured.Value);
+
+            if (filter.CategoryId.HasValue)
+                query = query.Where(p => p.CategoryId == filter.CategoryId.Value);
 
             if (!string.IsNullOrEmpty(filter.SortBy))
             {
-                switch (filter.SortBy.ToLower())
+                query = filter.SortBy.ToLower() switch
                 {
-                    case "price":
-                        query = filter.SortDescending
-                            ? query.OrderByDescending(p => p.Price)
-                            : query.OrderBy(p => p.Price);
-                        break;
-
-                    case "title":
-                        query = filter.SortDescending
-                            ? query.OrderByDescending(p => p.Title)
-                            : query.OrderBy(p => p.Title);
-                        break;
-                }
+                    "price" => filter.SortDescending
+                                    ? query.OrderByDescending(p => p.Price)
+                                    : query.OrderBy(p => p.Price),
+                    "title" => filter.SortDescending
+                                    ? query.OrderByDescending(p => p.Title)
+                                    : query.OrderBy(p => p.Title),
+                    "rating" => filter.SortDescending
+                                    ? query.OrderByDescending(p => p.Rating)
+                                    : query.OrderBy(p => p.Rating),
+                    _ => query
+                };
             }
 
             var totalCount = query.Count();
@@ -70,13 +73,7 @@ namespace CompanySystem.BLL
                 .Take(pagination.PageSize)
                 .ToList();
 
-            var items = products.Select(p => new ProductReadDTO
-            {
-                Id = p.Id,
-                Title = p.Title,
-                Price = p.Price,
-                Count = p.Count
-            });
+            var items = products.Select(MapToDto);
 
             var metadata = new PaginationMetadata
             {
@@ -96,6 +93,9 @@ namespace CompanySystem.BLL
 
             return GeneralResult<PagedResult<ProductReadDTO>>.SuccessResult(result);
         }
+
+        /*------------------------------------------------*/
+
         public async Task<GeneralResult<ProductReadDTO>> GetProductByIdAsync(int id)
         {
             var product = await _unitOfWork.ProductRepository.GetByIdWithCategoryAsync(id);
@@ -103,16 +103,10 @@ namespace CompanySystem.BLL
             if (product == null)
                 return GeneralResult<ProductReadDTO>.NotFound();
 
-            var dto = new ProductReadDTO
-            {
-                Id = product.Id,
-                Title = product.Title,
-                Price = product.Price,
-                Count = product.Count,
-            };
-
-            return GeneralResult<ProductReadDTO>.SuccessResult(dto);
+            return GeneralResult<ProductReadDTO>.SuccessResult(MapToDto(product));
         }
+
+        /*------------------------------------------------*/
 
         public async Task<GeneralResult<ProductReadDTO>> CreateProductAsync(ProductCreateDTO dto)
         {
@@ -132,25 +126,22 @@ namespace CompanySystem.BLL
             var product = new Product
             {
                 Title = dto.Title!,
+                Description = dto.Description,
                 Price = dto.Price,
                 Count = dto.Count,
-                CategoryId = dto.CategoryId
+                CategoryId = dto.CategoryId,
+                Unit = dto.Unit,
+                IsOrganic = dto.IsOrganic,
+                IsFeatured = dto.IsFeatured
             };
 
             _unitOfWork.ProductRepository.AddAsync(product);
+            _unitOfWork.Save();
 
-             _unitOfWork.Save();
-
-            var result = new ProductReadDTO
-            {
-                Id = product.Id,
-                Title = product.Title,
-                Price = product.Price,
-                Count = product.Count,
-            };
-
-            return GeneralResult<ProductReadDTO>.SuccessResult(result);
+            return GeneralResult<ProductReadDTO>.SuccessResult(MapToDto(product));
         }
+
+        /*------------------------------------------------*/
 
         public async Task<GeneralResult<ProductReadDTO>> UpdateProductAsync(int id, ProductEditDTO dto)
         {
@@ -173,24 +164,23 @@ namespace CompanySystem.BLL
                 return GeneralResult<ProductReadDTO>.FailResult("Category Not Found");
 
             product.Title = dto.Title!;
+            product.Description = dto.Description;
             product.Price = dto.Price;
             product.Count = dto.Count;
             product.CategoryId = dto.CategoryId;
+            product.Unit = dto.Unit;
+            product.IsOrganic = dto.IsOrganic;
+            product.IsFeatured = dto.IsFeatured;
+            product.ImageURL = dto.ImageURL;
 
             _unitOfWork.ProductRepository.Update(product);
+            _unitOfWork.Save();
 
-             _unitOfWork.Save();
-
-            var result = new ProductReadDTO
-            {
-                Id = product.Id,
-                Title = product.Title,
-                Price = product.Price,
-                Count = product.Count
-            };
-
-            return GeneralResult<ProductReadDTO>.SuccessResult(result);
+            return GeneralResult<ProductReadDTO>.SuccessResult(MapToDto(product));
         }
+
+        /*------------------------------------------------*/
+
         public async Task<GeneralResult<bool>> DeleteProductAsync(int id)
         {
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
@@ -199,10 +189,29 @@ namespace CompanySystem.BLL
                 return GeneralResult<bool>.NotFound();
 
             _unitOfWork.ProductRepository.Delete(product);
-
-             _unitOfWork.Save();
+            _unitOfWork.Save();
 
             return GeneralResult<bool>.SuccessResult(true);
         }
+
+        /*------------------------------------------------*/
+
+        private static ProductReadDTO MapToDto(Product p) => new()
+        {
+            Id = p.Id,
+            Title = p.Title,
+            Description = p.Description,
+            Price = p.Price,
+            Count = p.Count,
+            ImageURL = p.ImageURL,
+            Unit = p.Unit,
+            Rating = p.Rating,
+            Reviews = p.Reviews,
+            IsOrganic = p.IsOrganic,
+            IsFeatured = p.IsFeatured,
+            CategoryId = p.CategoryId,
+            CategoryName = p.Category?.Name,
+            CreatedAt = p.CreatedAt
+        };
     }
 }

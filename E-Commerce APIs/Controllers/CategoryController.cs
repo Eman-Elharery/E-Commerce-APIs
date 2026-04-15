@@ -30,10 +30,21 @@ namespace lab11
 
                 return Ok(result);
             }
+           [HttpGet("{id}")]
+          [Authorize(Policy = AuthPolicies.AdminOrUser)]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var result = await _categoryManager.GetCategoryByIdAsync(id);
 
-            /*------------------------------------------------*/
+            if (!result.Success)
+                return NotFound(result);
 
-            [HttpPost]
+            return Ok(result);
+        }
+
+        /*------------------------------------------------*/
+
+        [HttpPost]
             [Authorize(Policy = AuthPolicies.AdminOnly)]
         public async Task<IActionResult> Create(CategoryCreateDTO dto)
             {

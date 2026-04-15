@@ -14,5 +14,11 @@ namespace CompanySystem.DAL
                 .Include(c => c.Products)
                 .ToListAsync();
         }
+        public async Task<Category?> GetByIdWithProductsAsync(int id)
+        {
+            return await _context.Categories
+                .Include(c => c.Products)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
     }
 }

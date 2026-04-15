@@ -25,7 +25,15 @@ namespace lab11
             builder.Services.Configure<JwtSettings>(jwtSection);
             var jwtSettings = jwtSection.Get<JwtSettings>() ?? new JwtSettings();
 
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+            });
             builder.Services
                 .AddAuthentication(options =>
                 {
@@ -43,7 +51,7 @@ namespace lab11
                         ValidIssuer = jwtSettings.Issuer,
                         ValidAudience = jwtSettings.Audience,
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Convert.FromBase64String(jwtSettings.SecretKey)),  // ✅ Base64
+                            Convert.FromBase64String(jwtSettings.SecretKey)), 
                         ClockSkew = TimeSpan.Zero
                     };
                 });
@@ -84,7 +92,7 @@ namespace lab11
             }
 
             app.UseStaticFiles();
-
+            app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
 

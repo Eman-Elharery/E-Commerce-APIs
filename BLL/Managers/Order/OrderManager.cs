@@ -22,14 +22,21 @@ namespace CompanySystem.BLL
 
             var order = new Order
             {
-                UserId          = userId,
-                Status          = OrderStatus.Pending,
-                ShippingAddress = dto.ShippingAddress,
-                TotalPrice      = cart.Items.Sum(i => i.Quantity * i.UnitPrice),
-                Items           = cart.Items.Select(i => new OrderItem
+                UserId = userId,
+                Status = OrderStatus.Pending,
+                PaymentMethod = dto.PaymentMethod,
+                TotalPrice = cart.Items.Sum(i => i.Quantity * i.UnitPrice),
+
+                ShippingFullName = dto.ShippingAddress?.FullName,
+                ShippingAddress = dto.ShippingAddress?.Address,
+                ShippingCity = dto.ShippingAddress?.City,
+                ShippingCountry = dto.ShippingAddress?.Country,
+                ShippingPhone = dto.ShippingAddress?.Phone,
+
+                Items = cart.Items.Select(i => new OrderItem
                 {
                     ProductId = i.ProductId,
-                    Quantity  = i.Quantity,
+                    Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice
                 }).ToList()
             };
@@ -48,8 +55,7 @@ namespace CompanySystem.BLL
         public async Task<GeneralResult<IEnumerable<OrderReadDTO>>> GetUserOrdersAsync(string userId)
         {
             var orders = await _unitOfWork.OrderRepository.GetOrdersByUserIdAsync(userId);
-            var dtos   = orders.Select(MapToDto);
-            return GeneralResult<IEnumerable<OrderReadDTO>>.SuccessResult(dtos);
+            return GeneralResult<IEnumerable<OrderReadDTO>>.SuccessResult(orders.Select(MapToDto));
         }
 
         /*------------------------------------------------*/
@@ -112,23 +118,28 @@ namespace CompanySystem.BLL
 
         /*------------------------------------------------*/
 
-        private static OrderReadDTO MapToDto(Order order)
+        private static OrderReadDTO MapToDto(Order o) => new()
         {
-            return new OrderReadDTO
+            Id = o.Id,
+            Status = o.Status.ToString(),
+            TotalPrice = o.TotalPrice,
+            PaymentMethod = o.PaymentMethod,
+            CreatedAt = o.CreatedAt,
+            ShippingAddress = new ShippingAddressDTO
             {
-                Id              = order.Id,
-                Status          = order.Status.ToString(),
-                TotalPrice      = order.TotalPrice,
-                ShippingAddress = order.ShippingAddress,
-                CreatedAt       = order.CreatedAt,
-                Items           = order.Items.Select(i => new OrderItemReadDTO
-                {
-                    ProductId    = i.ProductId,
-                    ProductTitle = i.Product?.Title ?? string.Empty,
-                    Quantity     = i.Quantity,
-                    UnitPrice    = i.UnitPrice
-                })
-            };
-        }
+                FullName = o.ShippingFullName,
+                Address = o.ShippingAddress,
+                City = o.ShippingCity,
+                Country = o.ShippingCountry,
+                Phone = o.ShippingPhone
+            },
+            Items = o.Items.Select(i => new OrderItemReadDTO
+            {
+                ProductId = i.ProductId,
+                ProductTitle = i.Product?.Title ?? string.Empty,
+                Quantity = i.Quantity,
+                UnitPrice = i.UnitPrice
+            })
+        };
     }
 }

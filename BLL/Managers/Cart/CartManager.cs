@@ -11,7 +11,6 @@ namespace CompanySystem.BLL
             _unitOfWork = unitOfWork;
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<CartReadDTO>> GetCartAsync(string userId)
         {
@@ -23,7 +22,6 @@ namespace CompanySystem.BLL
             return GeneralResult<CartReadDTO>.SuccessResult(MapToDto(cart));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<CartReadDTO>> AddToCartAsync(string userId, AddToCartDTO dto)
         {
@@ -72,7 +70,6 @@ namespace CompanySystem.BLL
             return GeneralResult<CartReadDTO>.SuccessResult(MapToDto(updated!));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<CartReadDTO>> UpdateCartItemAsync(string userId, UpdateCartItemDTO dto)
         {
@@ -120,7 +117,6 @@ namespace CompanySystem.BLL
             return GeneralResult<bool>.SuccessResult(true);
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<bool>> ClearCartAsync(string userId)
         {
@@ -128,7 +124,6 @@ namespace CompanySystem.BLL
             return GeneralResult<bool>.SuccessResult(true);
         }
 
-        /*------------------------------------------------*/
 
         private static CartReadDTO MapToDto(Cart cart)
         {

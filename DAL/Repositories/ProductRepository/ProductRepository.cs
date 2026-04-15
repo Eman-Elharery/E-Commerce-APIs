@@ -6,6 +6,7 @@ namespace CompanySystem.DAL
     {
         public ProductRepository(AppDbContext context) : base(context)
         {
+
         }
 
         public async Task<IEnumerable<Product>> GetAllWithCategoryAsync()
