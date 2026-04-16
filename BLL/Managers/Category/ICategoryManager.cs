@@ -9,5 +9,6 @@
         Task<GeneralResult<CategoryReadDTO>> UpdateCategoryAsync(int id, CategoryEditDTO dto);
 
         Task<GeneralResult<bool>> DeleteCategoryAsync(int id);
+        Task<GeneralResult<CategoryReadDTO>> UploadCategoryImageAsync(int id,  ImageUploadDto dto, string basePath, string? schema,   string? host);
     }
 }

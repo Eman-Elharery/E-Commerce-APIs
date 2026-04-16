@@ -10,17 +10,20 @@ namespace CompanySystem.BLL
         private readonly IValidator<ProductCreateDTO> _validator;
         private readonly IValidator<ProductEditDTO> _editValidator;
         private readonly IErrorMapper _errorMapper;
+        private readonly IImageManager _imageManager;
 
         public ProductManager(
             IUnitOfWork unitOfWork,
             IValidator<ProductCreateDTO> validator,
             IValidator<ProductEditDTO> editValidator,
-            IErrorMapper errorMapper)
+            IErrorMapper errorMapper,
+            IImageManager imageManager)
         {
             _unitOfWork = unitOfWork;
             _validator = validator;
             _editValidator = editValidator;
             _errorMapper = errorMapper;
+            _imageManager = imageManager;
         }
 
         /*------------------------------------------------*/
@@ -53,15 +56,9 @@ namespace CompanySystem.BLL
             {
                 query = filter.SortBy.ToLower() switch
                 {
-                    "price" => filter.SortDescending
-                                    ? query.OrderByDescending(p => p.Price)
-                                    : query.OrderBy(p => p.Price),
-                    "title" => filter.SortDescending
-                                    ? query.OrderByDescending(p => p.Title)
-                                    : query.OrderBy(p => p.Title),
-                    "rating" => filter.SortDescending
-                                    ? query.OrderByDescending(p => p.Rating)
-                                    : query.OrderBy(p => p.Rating),
+                    "price" => filter.SortDescending ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price),
+                    "title" => filter.SortDescending ? query.OrderByDescending(p => p.Title) : query.OrderBy(p => p.Title),
+                    "rating" => filter.SortDescending ? query.OrderByDescending(p => p.Rating) : query.OrderBy(p => p.Rating),
                     _ => query
                 };
             }
@@ -73,8 +70,6 @@ namespace CompanySystem.BLL
                 .Take(pagination.PageSize)
                 .ToList();
 
-            var items = products.Select(MapToDto);
-
             var metadata = new PaginationMetadata
             {
                 CurrentPage = pagination.PageNumber,
@@ -85,13 +80,11 @@ namespace CompanySystem.BLL
                 HasPrevious = pagination.PageNumber > 1
             };
 
-            var result = new PagedResult<ProductReadDTO>
+            return GeneralResult<PagedResult<ProductReadDTO>>.SuccessResult(new PagedResult<ProductReadDTO>
             {
-                Items = items,
+                Items = products.Select(MapToDto),
                 Metadata = metadata
-            };
-
-            return GeneralResult<PagedResult<ProductReadDTO>>.SuccessResult(result);
+            });
         }
 
         /*------------------------------------------------*/
@@ -113,10 +106,7 @@ namespace CompanySystem.BLL
             var validationResult = await _validator.ValidateAsync(dto);
 
             if (!validationResult.IsValid)
-            {
-                var errors = _errorMapper.MapError(validationResult);
-                return GeneralResult<ProductReadDTO>.FailResult(errors);
-            }
+                return GeneralResult<ProductReadDTO>.FailResult(_errorMapper.MapError(validationResult));
 
             var category = await _unitOfWork.CategoryRepository.GetByIdAsync(dto.CategoryId);
 
@@ -148,10 +138,7 @@ namespace CompanySystem.BLL
             var validationResult = await _editValidator.ValidateAsync(dto);
 
             if (!validationResult.IsValid)
-            {
-                var errors = _errorMapper.MapError(validationResult);
-                return GeneralResult<ProductReadDTO>.FailResult(errors);
-            }
+                return GeneralResult<ProductReadDTO>.FailResult(_errorMapper.MapError(validationResult));
 
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
 
@@ -192,6 +179,33 @@ namespace CompanySystem.BLL
             _unitOfWork.Save();
 
             return GeneralResult<bool>.SuccessResult(true);
+        }
+
+        /*------------------------------------------------*/
+
+        public async Task<GeneralResult<ProductReadDTO>> UploadProductImageAsync(
+            int id,
+            ImageUploadDto dto,
+            string basePath,
+            string schema,
+            string host)
+        {
+            var product = await _unitOfWork.ProductRepository.GetByIdWithCategoryAsync(id);
+
+            if (product == null)
+                return GeneralResult<ProductReadDTO>.NotFound();
+
+            var uploadResult = await _imageManager.UploadAsync(dto, basePath, schema, host);
+
+            if (!uploadResult.Success)
+                return GeneralResult<ProductReadDTO>.FailResult(uploadResult.Message ?? "Image upload failed");
+
+            product.ImageURL = uploadResult.Data!.ImageURL;
+
+            _unitOfWork.ProductRepository.Update(product);
+            _unitOfWork.Save();
+
+            return GeneralResult<ProductReadDTO>.SuccessResult(MapToDto(product));
         }
 
         /*------------------------------------------------*/

@@ -14,6 +14,13 @@ namespace CompanySystem.BLL
         Task<GeneralResult<ProductReadDTO>> UpdateProductAsync(int id, ProductEditDTO dto);
 
         Task<GeneralResult<bool>> DeleteProductAsync(int id);
+        Task<GeneralResult<ProductReadDTO>> UploadProductImageAsync(
+          int id,
+          ImageUploadDto dto,
+          string basePath,
+          string schema,
+          string host);
+    
 
-    }
+}
 }
