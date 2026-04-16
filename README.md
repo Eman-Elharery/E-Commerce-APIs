@@ -6,17 +6,17 @@ A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, follo
 
 ## Table of Contents
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Architecture](#-architecture)
-- [Project Structure](#-project-structure)
-- [Database ERD](#-database-erd)
-- [Getting Started](#-getting-started)
-- [API Endpoints](#-api-endpoints)
-- [Authentication](#-authentication)
-- [Roles & Policies](#-roles--policies)
-- [Image Upload](#-image-upload)
-- [Pagination & Filtering](#-pagination--filtering)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Database ERD](#database-erd)
+- [Getting Started](#getting-started)
+- [API Endpoints](#api-endpoints)
+- [Authentication](#authentication)
+- [Roles & Policies](#roles--policies)
+- [Image Upload](#image-upload)
+- [Pagination & Filtering](#pagination--filtering)
 
 ---
 
