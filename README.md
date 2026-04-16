@@ -1,4 +1,4 @@
-# 🛒 E-Commerce APIs
+# E-Commerce APIs
 
 A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, following a clean **Clean N-Tier Architecture (3 Layers + Common Layer)**. Supports product & category management, cart, orders, image uploads, JWT authentication, and role-based authorization.
 
@@ -47,7 +47,7 @@ A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, follo
 | Identity | ASP.NET Core Identity |
 | Validation | FluentValidation |
 | API Docs | Scalar / OpenAPI |
-| Architecture | 3-Layer (DAL / BLL / API) |
+| Architecture | 3-Layer (DAL / BLL / API) + Common |
 
 ---
 
@@ -61,7 +61,7 @@ A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, follo
                  │
 ┌────────────────▼────────────────────┐
 │           BLL Layer                 │
-│  Managers, Validators, DTOs,        │
+│  Managers, Validators, DTOs         │
 │                                     │
 └────────────────┬────────────────────┘
                  │
@@ -185,7 +185,7 @@ E-Commerce APIs/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/ecommerce-apis.git
+git clone https://github.com/Eman-Elharery/ecommerce-apis.git
 cd ecommerce-apis
 
 # 2. Restore packages
