@@ -169,7 +169,7 @@ E-Commerce APIs/
 
 ## Database ERD
 
-![ERD](ERD.jpeg)
+![ERD](ERD.jpg)
 
 ---
 
