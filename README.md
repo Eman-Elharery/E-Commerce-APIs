@@ -1,6 +1,6 @@
 # 🛒 E-Commerce APIs
 
-A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, following a clean **3-Layer Architecture** (DAL → BLL → API). Supports product & category management, cart, orders, image uploads, JWT authentication, and role-based authorization.
+A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, following a clean **Clean N-Tier Architecture (3 Layers + Common Layer)**. Supports product & category management, cart, orders, image uploads, JWT authentication, and role-based authorization.
 
 ---
 
@@ -63,13 +63,19 @@ A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, follo
 ┌────────────────▼────────────────────┐
 │           BLL Layer                 │
 │  Managers, Validators, DTOs,        │
-│  Filtering, Pagination              │
+│                                     │
 └────────────────┬────────────────────┘
                  │
 ┌────────────────▼────────────────────┐
 │           DAL Layer                 │
 │  DbContext, Models, Repositories,   │
-│  UnitOfWork, Migrations             │
+│  UnitOfWork, Migrations             │                   
+└────────────────┬────────────────────┘
+                 │
+┌────────────────▼────────────────────┐
+│           Common Layer              │
+│  Filtering, Pagination,             │
+│ GeneralResult                       │
 └─────────────────────────────────────┘
 ```
 
@@ -87,22 +93,29 @@ A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, follo
 ```
 E-Commerce APIs/
 │
+│
+├── Common/                               # Common Layer
+│    ├── Filtering/
+│    ├── Pagination/
+│    └── GeneralResult/   
+│
+│
 ├── DAL/                               # Data Access Layer
 │   ├── Data/
 │   │   ├── Context/
 │   │   │   └── AppDbContext.cs
-│   │   ├── Models/
-│   │   │   ├── Product.cs
-│   │   │   ├── Category.cs
-│   │   │   ├── Cart.cs
-│   │   │   ├── CartItem.cs
-│   │   │   ├── Order.cs
-│   │   │   ├── OrderItem.cs
-│   │   │   ├── OrderStatus.cs
-│   │   │   ├── ApplicationUser.cs
-│   │   │   ├── ApplicationRole.cs
-│   │   │   └── IAuditableEntity.cs
-│   │   └── Configuration/
+│   │   └── Models/
+│   │       ├── Product.cs
+│   │       ├── Category.cs
+│   │       ├── Cart.cs
+│   │       ├── CartItem.cs
+│   │       ├── Order.cs
+│   │       ├── OrderItem.cs
+│   │       ├── OrderStatus.cs
+│   │       ├── ApplicationUser.cs
+│   │       ├── ApplicationRole.cs
+│   │       └── IAuditableEntity.cs
+│   │   
 │   ├── Repositories/
 │   │   ├── GenericRepository/
 │   │   ├── ProductRepository/
@@ -132,9 +145,6 @@ E-Commerce APIs/
 │   │   ├── Order/
 │   │   └── Image/
 │   ├── Validator/
-│   ├── Filtering/
-│   ├── Pagination/
-│   ├── GeneralResult/
 │   ├── ErrorMapper/
 │   ├── Settings/
 │   │   └── JwtSettings.cs
@@ -160,46 +170,7 @@ E-Commerce APIs/
 
 ## 🗄 Database ERD
 
-### Entities & Relationships
-
-```
-ApplicationUser
-    │
-    ├──< Cart (1 user → 1 cart)
-    │       └──< CartItem >── Product
-    │
-    └──< Order (1 user → many orders)
-            └──< OrderItem >── Product
-                                │
-                            Category
-```
-
-### Full ERD
-
-| Table | PK | FKs | Key Fields |
-|---|---|---|---|
-| `AspNetUsers` | `Id` | — | FirstName, LastName, Email, CreatedAt |
-| `AspNetRoles` | `Id` | — | Name, Description |
-| `Categories` | `Id` | — | Name, Description, ImageURL, Slug, CreatedAt |
-| `Products` | `Id` | `CategoryId` | Title, Price, Count, Unit, Rating, IsOrganic, IsFeatured, ImageURL |
-| `Carts` | `Id` | `UserId` | CreatedAt *(unique per user)* |
-| `CartItems` | `Id` | `CartId`, `ProductId` | Quantity, UnitPrice *(unique CartId+ProductId)* |
-| `Orders` | `Id` | `UserId` | Status, TotalPrice, PaymentMethod, ShippingAddress*, CreatedAt |
-| `OrderItems` | `Id` | `OrderId`, `ProductId` | Quantity, UnitPrice |
-
-> *ShippingAddress is stored as flat columns: `ShippingFullName`, `ShippingAddress`, `ShippingCity`, `ShippingCountry`, `ShippingPhone`
-
-### Relationships
-
-| From | To | Type |
-|---|---|---|
-| `ApplicationUser` | `Cart` | One-to-One |
-| `Cart` | `CartItem` | One-to-Many |
-| `CartItem` | `Product` | Many-to-One |
-| `ApplicationUser` | `Order` | One-to-Many |
-| `Order` | `OrderItem` | One-to-Many |
-| `OrderItem` | `Product` | Many-to-One |
-| `Category` | `Product` | One-to-Many |
+![ERD](ERD.jpeg)
 
 ---
 
@@ -240,33 +211,6 @@ dotnet run --project "E-Commerce APIs"
 
 ---
 
-## ⚙️ Configuration
-
-Edit `appsettings.json`:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=ECommerceDB;Trusted_Connection=True;"
-  },
-  "JwtSettings": {
-    "SecretKey": "YOUR_BASE64_SECRET_KEY_HERE",
-    "Issuer": "ECommerceApp",
-    "Audience": "ECommerceUsers",
-    "DurationInMinutes": 60
-  }
-}
-```
-
-> ⚠️ `SecretKey` must be a **Base64-encoded** string of at least 32 bytes.
-
-Generate a key:
-```csharp
-Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32))
-```
-
----
-
 ## 📡 API Endpoints
 
 ### 🔐 Auth — `/api/auth`
@@ -279,9 +223,9 @@ Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetByt
 **Register Body:**
 ```json
 {
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "john@example.com",
+  "firstName": "eman",
+  "lastName": "refaat",
+  "email": "eman@example.com",
   "password": "Pass@123",
   "role": "User"
 }
@@ -290,7 +234,7 @@ Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetByt
 **Login Body:**
 ```json
 {
-  "email": "john@example.com",
+  "email": "eman@example.com",
   "password": "Pass@123"
 }
 ```
