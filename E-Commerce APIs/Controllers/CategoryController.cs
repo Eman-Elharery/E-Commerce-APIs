@@ -20,7 +20,7 @@ namespace lab11
             _webHostEnvironment = webHostEnvironment;
         }
 
-        /*------------------------------------------------*/
+        
 
         [HttpGet]
         [Authorize(Policy = AuthPolicies.AdminOrUser)]
@@ -34,7 +34,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpGet("{id}")]
         [Authorize(Policy = AuthPolicies.AdminOrUser)]
@@ -48,7 +47,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpPost]
         [Authorize(Policy = AuthPolicies.AdminOnly)]
@@ -62,7 +60,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpPut("{id}")]
         [Authorize(Policy = AuthPolicies.AdminOnly)]
@@ -76,7 +73,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpDelete("{id}")]
         [Authorize(Policy = AuthPolicies.AdminOnly)]
@@ -90,7 +86,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpPost("{id}/image")]
         [Authorize(Policy = AuthPolicies.AdminOnly)]

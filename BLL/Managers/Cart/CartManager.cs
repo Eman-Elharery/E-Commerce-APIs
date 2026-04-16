@@ -95,7 +95,6 @@ namespace CompanySystem.BLL
             return GeneralResult<CartReadDTO>.SuccessResult(MapToDto(updated!));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<bool>> RemoveFromCartAsync(string userId, int productId)
         {

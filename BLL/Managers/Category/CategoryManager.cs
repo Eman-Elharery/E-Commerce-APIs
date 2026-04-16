@@ -18,7 +18,7 @@ namespace CompanySystem.BLL
             _imageManager = imageManager;
         }
 
-        /*------------------------------------------------*/
+        
 
         public async Task<GeneralResult<IEnumerable<CategoryReadDTO>>> GetCategoriesAsync()
         {
@@ -27,7 +27,6 @@ namespace CompanySystem.BLL
             return GeneralResult<IEnumerable<CategoryReadDTO>>.SuccessResult(categories.Select(MapToDto));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<CategoryReadDTO>> GetCategoryByIdAsync(int id)
         {
@@ -39,7 +38,7 @@ namespace CompanySystem.BLL
             return GeneralResult<CategoryReadDTO>.SuccessResult(MapToDto(category));
         }
 
-        /*------------------------------------------------*/
+        
 
         public async Task<GeneralResult<CategoryReadDTO>> CreateCategoryAsync(CategoryCreateDTO dto)
         {
@@ -57,7 +56,6 @@ namespace CompanySystem.BLL
             return GeneralResult<CategoryReadDTO>.SuccessResult(MapToDto(category));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<CategoryReadDTO>> UpdateCategoryAsync(int id, CategoryEditDTO dto)
         {
@@ -77,7 +75,6 @@ namespace CompanySystem.BLL
             return GeneralResult<CategoryReadDTO>.SuccessResult(MapToDto(category));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<bool>> DeleteCategoryAsync(int id)
         {
@@ -92,7 +89,6 @@ namespace CompanySystem.BLL
             return GeneralResult<bool>.SuccessResult(true);
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<CategoryReadDTO>> UploadCategoryImageAsync(
             int id,
@@ -119,7 +115,7 @@ namespace CompanySystem.BLL
             return GeneralResult<CategoryReadDTO>.SuccessResult(MapToDto(category));
         }
 
-        /*------------------------------------------------*/
+        
 
         private static CategoryReadDTO MapToDto(Category c) => new()
         {

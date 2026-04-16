@@ -18,10 +18,9 @@ namespace lab11
             _orderManager = orderManager;
         }
 
-        /*------------------------------------------------*/
 
         [HttpPost]
-        public async Task<IActionResult> PlaceOrder([FromBody] CreateOrderDTO dto)
+        public async Task<IActionResult> PlaceOrder([FromBody] OrderCreateDTO dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var result = await _orderManager.PlaceOrderAsync(userId, dto);
@@ -32,7 +31,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpGet]
         public async Task<IActionResult> GetMyOrders()
@@ -46,7 +44,7 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
+        
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderById(int id)
@@ -60,11 +58,10 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpPut("{id}/status")]
         [Authorize(Policy = AuthPolicies.AdminOnly)]
-        public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] UpdateOrderStatusDTO dto)
+        public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] OrderStatusUpdateDTO dto)
         {
             var result = await _orderManager.UpdateOrderStatusAsync(id, dto);
 
@@ -74,7 +71,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpDelete("{id}/cancel")]
         public async Task<IActionResult> CancelOrder(int id)

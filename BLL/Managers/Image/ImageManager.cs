@@ -7,13 +7,11 @@ namespace CompanySystem.BLL
     {
         private readonly IValidator<ImageUploadDto> _validator;
         private readonly IErrorMapper _errorMapper;
-        /*------------------------------------------------------------------*/
         public ImageManager(IValidator<ImageUploadDto> validator, IErrorMapper errorMapper)
         {
             _validator = validator;
             _errorMapper = errorMapper;
         }
-        /*------------------------------------------------------------------*/
         public async Task<GeneralResult<ImageUploadResultDto>> UploadAsync(
             ImageUploadDto imageUploadDto,
             string basePath,
@@ -54,6 +52,6 @@ namespace CompanySystem.BLL
             var imageUploadResultDto = new ImageUploadResultDto(url);
             return GeneralResult<ImageUploadResultDto>.SuccessResult(imageUploadResultDto);
         }
-        /*------------------------------------------------------------------*/
+        
     }
 }

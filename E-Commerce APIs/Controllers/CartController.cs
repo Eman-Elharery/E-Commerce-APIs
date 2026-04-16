@@ -17,7 +17,6 @@ namespace lab11
             _cartManager = cartManager;
         }
 
-        /*------------------------------------------------*/
 
         [HttpGet]
         public async Task<IActionResult> GetCart()
@@ -31,7 +30,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpPost]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartDTO dto)
@@ -45,7 +43,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpPut]
         public async Task<IActionResult> UpdateCartItem([FromBody] UpdateCartItemDTO dto)
@@ -59,7 +56,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpDelete("{productId}")]
         public async Task<IActionResult> RemoveFromCart(int productId)
@@ -73,7 +69,6 @@ namespace lab11
             return Ok(result);
         }
 
-        /*------------------------------------------------*/
 
         [HttpDelete]
         public async Task<IActionResult> ClearCart()

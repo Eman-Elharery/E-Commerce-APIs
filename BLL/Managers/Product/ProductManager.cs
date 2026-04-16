@@ -26,7 +26,6 @@ namespace CompanySystem.BLL
             _imageManager = imageManager;
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<PagedResult<ProductReadDTO>>> GetProductsAsync(
             ProductFilterParameters filter,
@@ -87,7 +86,7 @@ namespace CompanySystem.BLL
             });
         }
 
-        /*------------------------------------------------*/
+        
 
         public async Task<GeneralResult<ProductReadDTO>> GetProductByIdAsync(int id)
         {
@@ -99,7 +98,6 @@ namespace CompanySystem.BLL
             return GeneralResult<ProductReadDTO>.SuccessResult(MapToDto(product));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<ProductReadDTO>> CreateProductAsync(ProductCreateDTO dto)
         {
@@ -131,7 +129,6 @@ namespace CompanySystem.BLL
             return GeneralResult<ProductReadDTO>.SuccessResult(MapToDto(product));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<ProductReadDTO>> UpdateProductAsync(int id, ProductEditDTO dto)
         {
@@ -166,7 +163,6 @@ namespace CompanySystem.BLL
             return GeneralResult<ProductReadDTO>.SuccessResult(MapToDto(product));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<bool>> DeleteProductAsync(int id)
         {
@@ -181,7 +177,6 @@ namespace CompanySystem.BLL
             return GeneralResult<bool>.SuccessResult(true);
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<ProductReadDTO>> UploadProductImageAsync(
             int id,
@@ -208,7 +203,6 @@ namespace CompanySystem.BLL
             return GeneralResult<ProductReadDTO>.SuccessResult(MapToDto(product));
         }
 
-        /*------------------------------------------------*/
 
         private static ProductReadDTO MapToDto(Product p) => new()
         {

@@ -33,13 +33,13 @@ namespace CompanySystem.DAL
         {
             base.OnModelCreating(modelBuilder);
 
-            /*------ Roles ------*/
+            
             modelBuilder.Entity<ApplicationRole>().HasData(
                 new ApplicationRole { Id = "role-admin-guid-0001", Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "role-admin-stamp-0001", Description = "Full system access" },
                 new ApplicationRole { Id = "role-user-guid-0002", Name = "User", NormalizedName = "USER", ConcurrencyStamp = "role-user-stamp-0002", Description = "Read-only access" }
             );
 
-            /*------ Admin user ------*/
+            
             var hasher = new PasswordHasher<ApplicationUser>();
             var adminId = "user-admin-guid-0001";
             var adminUser = new ApplicationUser
@@ -62,7 +62,7 @@ namespace CompanySystem.DAL
                 new IdentityUserRole<string> { UserId = adminId, RoleId = "role-admin-guid-0001" }
             );
 
-            /*------ Categories ------*/
+           
             modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Fresh Fruits", Description = "Seasonal fresh fruits full of natural sweetness and vitamins.", ImageURL = "https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&h=300&fit=crop", Slug = "fresh-fruits", CreatedAt = _seedDate },
                 new Category { Id = 2, Name = "Vegetables", Description = "Farm-fresh vegetables for healthy everyday meals.", ImageURL = "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=300&fit=crop", Slug = "vegetables", CreatedAt = _seedDate },
@@ -74,7 +74,7 @@ namespace CompanySystem.DAL
                 new Category { Id = 8, Name = "Ready-to-use Vegetables", Description = "Pre-cut and washed vegetables ready to use instantly.", ImageURL = "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop", Slug = "ready-to-use-vegetables", CreatedAt = _seedDate }
             );
 
-            /*------ Products ------*/
+            
             modelBuilder.Entity<Product>().HasData(
                 // Fresh Fruits
                 new Product { Id = 101, Title = "Red Apple", Description = "Crisp and juicy red apples, full of natural sweetness and vitamins.", Price = 3.49m, Count = 150, Unit = "kg", Rating = 4.7, Reviews = 120, IsOrganic = true, IsFeatured = false, CategoryId = 1, ImageURL = "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400&h=400&fit=crop", CreatedAt = _seedDate },
@@ -112,7 +112,7 @@ namespace CompanySystem.DAL
                 new Product { Id = 802, Title = "Pre-Cut Carrots", Description = "Freshly washed and cut carrots, ready to add to any dish.", Price = 3.49m, Count = 60, Unit = "pack", Rating = 4.5, Reviews = 40, IsOrganic = true, IsFeatured = false, CategoryId = 8, ImageURL = "https://img.freepik.com/premium-photo/background-features-sliced-carrots_961875-393364.jpg", CreatedAt = _seedDate }
             );
 
-            /*------ Cart config ------*/
+            
             modelBuilder.Entity<Cart>()
                 .HasIndex(c => c.UserId).IsUnique();
             modelBuilder.Entity<Cart>()
@@ -129,7 +129,7 @@ namespace CompanySystem.DAL
             modelBuilder.Entity<CartItem>()
                 .Property(ci => ci.UnitPrice).HasColumnType("decimal(18,2)");
 
-            /*------ Order config ------*/
+           
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.User).WithMany()
                 .HasForeignKey(o => o.UserId).OnDelete(DeleteBehavior.Cascade);

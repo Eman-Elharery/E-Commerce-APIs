@@ -11,9 +11,8 @@ namespace CompanySystem.BLL
             _unitOfWork = unitOfWork;
         }
 
-        /*------------------------------------------------*/
 
-        public async Task<GeneralResult<OrderReadDTO>> PlaceOrderAsync(string userId, CreateOrderDTO dto)
+        public async Task<GeneralResult<OrderReadDTO>> PlaceOrderAsync(string userId, OrderCreateDTO dto)
         {
             var cart = await _unitOfWork.CartRepository.GetCartByUserIdAsync(userId);
 
@@ -50,7 +49,6 @@ namespace CompanySystem.BLL
             return GeneralResult<OrderReadDTO>.SuccessResult(MapToDto(created!));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<IEnumerable<OrderReadDTO>>> GetUserOrdersAsync(string userId)
         {
@@ -58,7 +56,6 @@ namespace CompanySystem.BLL
             return GeneralResult<IEnumerable<OrderReadDTO>>.SuccessResult(orders.Select(MapToDto));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<OrderReadDTO>> GetOrderByIdAsync(string userId, int orderId)
         {
@@ -73,9 +70,9 @@ namespace CompanySystem.BLL
             return GeneralResult<OrderReadDTO>.SuccessResult(MapToDto(order));
         }
 
-        /*------------------------------------------------*/
+        
 
-        public async Task<GeneralResult<OrderReadDTO>> UpdateOrderStatusAsync(int orderId, UpdateOrderStatusDTO dto)
+        public async Task<GeneralResult<OrderReadDTO>> UpdateOrderStatusAsync(int orderId, OrderStatusUpdateDTO dto)
         {
             var order = await _unitOfWork.OrderRepository.GetOrderWithItemsAsync(orderId);
 
@@ -93,7 +90,6 @@ namespace CompanySystem.BLL
             return GeneralResult<OrderReadDTO>.SuccessResult(MapToDto(order));
         }
 
-        /*------------------------------------------------*/
 
         public async Task<GeneralResult<bool>> CancelOrderAsync(string userId, int orderId)
         {
@@ -116,7 +112,6 @@ namespace CompanySystem.BLL
             return GeneralResult<bool>.SuccessResult(true);
         }
 
-        /*------------------------------------------------*/
 
         private static OrderReadDTO MapToDto(Order o) => new()
         {

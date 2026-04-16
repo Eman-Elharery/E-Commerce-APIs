@@ -20,7 +20,6 @@
                 };
             }
 
-            /*-------------------------------------*/
 
             public static GeneralResult<T> FailResult(string message)
             {
@@ -31,7 +30,6 @@
                 };
             }
 
-            /*-------------------------------------*/
 
             public static GeneralResult<T> FailResult(IEnumerable<string> errors)
             {
