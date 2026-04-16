@@ -12,7 +12,6 @@ A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, follo
 - [Project Structure](#-project-structure)
 - [Database ERD](#-database-erd)
 - [Getting Started](#-getting-started)
-- [Configuration](#-configuration)
 - [API Endpoints](#-api-endpoints)
 - [Authentication](#-authentication)
 - [Roles & Policies](#-roles--policies)
@@ -37,7 +36,7 @@ A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, follo
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -52,7 +51,7 @@ A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, follo
 
 ---
 
-## 🏗 Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────┐
@@ -88,7 +87,7 @@ A full-featured RESTful E-Commerce backend built with **ASP.NET Core 10**, follo
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 E-Commerce APIs/
@@ -168,13 +167,13 @@ E-Commerce APIs/
 
 ---
 
-## 🗄 Database ERD
+## Database ERD
 
 ![ERD](ERD.jpeg)
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -211,9 +210,9 @@ dotnet run --project "E-Commerce APIs"
 
 ---
 
-## 📡 API Endpoints
+## API Endpoints
 
-### 🔐 Auth — `/api/auth`
+### Auth — `/api/auth`
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
@@ -241,7 +240,7 @@ dotnet run --project "E-Commerce APIs"
 
 ---
 
-### 📦 Products — `/api/products`
+### Products — `/api/products`
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
@@ -269,7 +268,7 @@ dotnet run --project "E-Commerce APIs"
 
 ---
 
-### 🗂️ Categories — `/api/categories`
+### Categories — `/api/categories`
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
@@ -282,7 +281,7 @@ dotnet run --project "E-Commerce APIs"
 
 ---
 
-### 🛒 Cart — `/api/cart`
+### Cart — `/api/cart`
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
@@ -310,7 +309,7 @@ dotnet run --project "E-Commerce APIs"
 
 ---
 
-### 📋 Orders — `/api/orders`
+### Orders — `/api/orders`
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
@@ -325,7 +324,7 @@ dotnet run --project "E-Commerce APIs"
 {
   "paymentMethod": "cod",
   "shippingAddress": {
-    "fullName": "John Doe",
+    "fullName": "eman refaat",
     "address": "123 Main St",
     "city": "Cairo",
     "country": "Egypt",
@@ -344,11 +343,11 @@ dotnet run --project "E-Commerce APIs"
 | `3` | Delivered |
 | `4` | Cancelled |
 
-> ⚠️ Orders with status `Shipped` or `Delivered` cannot be cancelled.
+> Orders with status `Shipped` or `Delivered` cannot be cancelled.
 
 ---
 
-## 🔐 Authentication
+## Authentication
 
 All protected endpoints require a **Bearer Token** in the `Authorization` header:
 
@@ -360,7 +359,7 @@ Tokens are returned from `/api/auth/login` and expire based on `DurationInMinute
 
 ---
 
-## 👥 Roles & Policies
+## Roles & Policies
 
 | Policy | Roles | Used On |
 |---|---|---|
@@ -370,7 +369,7 @@ Tokens are returned from `/api/auth/login` and expire based on `DurationInMinute
 
 ---
 
-## 🖼️ Image Upload
+## Image Upload
 
 Images are stored locally in the `/Files` directory and served as static files.
 
@@ -394,7 +393,7 @@ Images are stored locally in the `/Files` directory and served as static files.
 
 ---
 
-## 📄 Pagination & Filtering
+## Pagination & Filtering
 
 All paginated responses return a `PagedResult<T>`:
 
@@ -402,7 +401,7 @@ All paginated responses return a `PagedResult<T>`:
 {
   "success": true,
   "data": {
-    "items": [...],
+    "items": [ ],
     "metadata": {
       "currentPage": 1,
       "pageSize": 10,
@@ -417,7 +416,7 @@ All paginated responses return a `PagedResult<T>`:
 
 ---
 
-## 🌐 CORS
+## CORS
 
 CORS is enabled for all origins in development. Configure in `Program.cs`:
 
@@ -428,48 +427,6 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 ```
-
----
-
-## 📖 API Documentation
-
-Scalar UI is available in Development at:
-
-```
-https://localhost:{port}/scalar
-```
-
----
-
-## 🌱 Seeded Data
-
-The database is pre-seeded with:
-- **2 Roles:** Admin, User
-- **1 Admin User:** `admin@company.com` / `Admin@123`
-- **8 Categories:** Fresh Fruits, Vegetables, Herbs & Green, Dried Fruits, Dried Vegetables, Nuts, Ready to Cook, Ready-to-use Vegetables
-- **24 Products** across all categories
-
----
-
-## 📝 GeneralResult Pattern
-
-Every API response is wrapped in `GeneralResult<T>`:
-
-```json
-// Success
-{
-  "success": true,
-  "data": { ... }
-}
-
-// Validation Error
-{
-  "success": false,
-  "errors": ["Title is required", "Price must be > 0"]
-}
-
-// Not Found
-{
   "success": false,
   "message": "Resource Not Found"
 }
