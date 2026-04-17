@@ -45,7 +45,7 @@ namespace lab11
 
 
         [HttpPut]
-        public async Task<IActionResult> UpdateCartItem([FromBody] UpdateCartItemDTO dto)
+        public async Task<IActionResult> UpdateCartItem([FromBody] CartItemUpdateDTO dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var result = await _cartManager.UpdateCartItemAsync(userId, dto);

@@ -9,7 +9,7 @@ namespace CompanySystem.Common
 
 
         [Range(1, int.MaxValue, ErrorMessage = "Page Number must be grater than 0")]
-        public int PageNumber { get; set; }
+        public int PageNumber { get; set; } = 1;
 
         [Range(1, MaxPageSize, ErrorMessage = "Page Size must be between 1 and  50")]
         public int PageSize

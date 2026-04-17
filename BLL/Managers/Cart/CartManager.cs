@@ -71,7 +71,7 @@ namespace CompanySystem.BLL
         }
 
 
-        public async Task<GeneralResult<CartReadDTO>> UpdateCartItemAsync(string userId, UpdateCartItemDTO dto)
+        public async Task<GeneralResult<CartReadDTO>> UpdateCartItemAsync(string userId, CartItemUpdateDTO dto)
         {
             if (dto.NewQuantity <= 0)
                 return GeneralResult<CartReadDTO>.FailResult("Quantity must be greater than 0");
